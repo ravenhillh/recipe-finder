@@ -1,0 +1,22 @@
+<h1>Recipe Finder</h1>
+
+<form phx-submit="search">
+  <input type="text" name="ingredients" value={@ingredients} placeholder="e.g., chicken, garlic" />
+  <button type="submit">Search Recipes</button>
+</form>
+
+<%= if @error do %>
+  <p style="color:red;"><%= @error %></p>
+<% end %>
+
+<ul>
+  <%= for recipe <- @recipes do %>
+    <% url = "https://spoonacular.com/recipes/#{slugify(recipe["title"])}-#{recipe["id"]}" %>
+    <li>
+      <a href={url} target="_blank">
+        <strong><%= recipe["title"] %></strong>
+      </a><br/>
+      <img src={recipe["image"]} width="100"/><br/>
+    </li>
+  <% end %>
+</ul>
