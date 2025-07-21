@@ -17,6 +17,20 @@
         <strong><%= recipe["title"] %></strong>
       </a><br/>
       <img src={recipe["image"]} width="100"/><br/>
+      <button phx-click="save_recipe" phx-value-id={recipe["id"]}>Save</button>
+    </li>
+  <% end %>
+</ul>
+
+<h2>Saved Recipes</h2>
+<ul>
+  <%= for saved <- @saved_recipes do %>
+    <% url = "https://spoonacular.com/recipes/#{slugify(saved.title)}-#{saved.spoonacular_id}" %>
+    <li>
+      <a href={url} target="_blank">
+        <strong><%= saved.title %></strong>
+      </a><br/>
+      <img src={saved.image_url} width="100"/><br/>
     </li>
   <% end %>
 </ul>

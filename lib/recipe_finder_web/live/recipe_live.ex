@@ -1,9 +1,41 @@
 defmodule RecipeFinderWeb.RecipeLive do
   use RecipeFinderWeb, :live_view
 
-  def mount(_params, _session, socket) do
-    {:ok, assign(socket, ingredients: "", recipes: [], error: nil)}
+ alias RecipeFinder.SavedRecipes
+# alias RecipeFinder.SavedRecipes.SavedRecipe
+#change the view so that the nav has a link to home and my recipes
+#remove the saved recipes section and place it on a separate view at my recipes
+#add in delete Recipe
+
+def mount(_params, _session, socket) do
+  saved_recipes = SavedRecipes.list_saved_recipes()
+  {:ok, assign(socket, ingredients: "", recipes: [], error: nil, saved_recipes: saved_recipes)}
+end
+
+def handle_event("save_recipe", %{"id" => id}, socket) do
+  id = String.to_integer(id)
+
+  recipe = Enum.find(socket.assigns.recipes, fn r -> r["id"] == id end)
+
+  if recipe do
+    attrs = %{
+      "title" => recipe["title"],
+      "spoonacular_id" => recipe["id"],
+      "image_url" => recipe["image"]
+    }
+
+    case SavedRecipes.create_saved_recipe(attrs) do
+      {:ok, _saved} ->
+        saved_recipes = SavedRecipes.list_saved_recipes()
+        {:noreply, assign(socket, saved_recipes: saved_recipes)}
+
+      {:error, _changeset} ->
+        {:noreply, put_flash(socket, :error, "Recipe could not be saved.")}
+    end
+  else
+    {:noreply, socket}
   end
+end
 
   def handle_event("search", %{"ingredients" => ingredients}, socket) do
     case fetch_recipes(ingredients) do
