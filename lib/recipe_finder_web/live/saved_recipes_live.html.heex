@@ -1,0 +1,24 @@
+<h2 class="text-2xl font-semibold text-gray-800 mb-4 text-center">Saved Recipes</h2>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+  <%= for saved <- @saved_recipes do %>
+    <% url = "https://spoonacular.com/recipes/#{slugify(saved.title)}-#{saved.spoonacular_id}" %>
+    <div class="bg-white rounded-lg shadow p-4 flex flex-col items-center text-center">
+      <a
+        href={url}
+        target="_blank"
+        class="text-lg font-semibold text-blue-700 hover:underline mb-2"
+      >
+        {saved.title}
+      </a>
+      <img src={saved.image_url} alt="Saved Recipe Image" class="w-24 h-24 object-cover rounded" />
+      <button
+        phx-click="delete"
+        phx-value-id={saved.id}
+        class="mt-2 bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
+      >
+        Delete
+      </button>
+    </div>
+  <% end %>
+</div>

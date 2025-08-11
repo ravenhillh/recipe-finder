@@ -1,36 +1,78 @@
-<h1>Recipe Finder</h1>
+<h1 class="text-3xl font-bold text-center text-gray-800 my-6">Recipe Finder</h1>
+<h2 class="mb-4">Type in some ingredients from your pantry to get potential meal ideas...</h2>
 
-<form phx-submit="search">
-  <input type="text" name="ingredients" value={@ingredients} placeholder="e.g., chicken, garlic" />
-  <button type="submit">Search Recipes</button>
+<% info_flash = Phoenix.Flash.get(@flash, :info) %>
+<%= if info_flash do %>
+  <div
+    id="toast"
+    phx-hook="AutoHideToast"
+    class="fixed top-5 right-5 bg-green-600 text-white px-4 py-2 rounded shadow-md transition-opacity duration-500 z-50"
+  >
+    {info_flash}
+  </div>
+<% end %>
+
+<% error_flash = Phoenix.Flash.get(@flash, :error) %>
+<%= if error_flash do %>
+  <div class="fixed top-5 right-5 bg-red-600 text-white px-4 py-2 rounded shadow-md transition-opacity duration-500 z-50">
+    {error_flash}
+  </div>
+<% end %>
+
+<form phx-submit="search" class="flex flex-col sm:flex-row justify-center items-center gap-4 mb-6">
+  <input
+    type="text"
+    name="ingredients"
+    value={@ingredients}
+    placeholder="e.g., chicken, garlic"
+    class="w-full sm:w-2/3 px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:border-blue-300"
+  />
+  <button
+    type="submit"
+    class="bg-blue-600 text-white font-semibold px-6 py-2 rounded-md hover:bg-blue-700 transition-colors"
+  >
+    Search Recipes
+  </button>
 </form>
 
 <%= if @error do %>
-  <p style="color:red;"><%= @error %></p>
+  <p class="text-center text-red-600 mb-4 font-medium">{@error}</p>
 <% end %>
 
-<ul>
+<!-- Recipe Results -->
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
   <%= for recipe <- @recipes do %>
     <% url = "https://spoonacular.com/recipes/#{slugify(recipe["title"])}-#{recipe["id"]}" %>
-    <li>
-      <a href={url} target="_blank">
-        <strong><%= recipe["title"] %></strong>
-      </a><br/>
-      <img src={recipe["image"]} width="100"/><br/>
-      <button phx-click="save_recipe" phx-value-id={recipe["id"]}>Save</button>
-    </li>
+    <div class="bg-white rounded-lg shadow p-4 flex flex-col items-center text-center">
+      <a
+        href={url}
+        target="_blank"
+        class="text-lg font-semibold text-blue-700 hover:underline mb-2"
+      >
+        {recipe["title"]}
+      </a>
+      <img src={recipe["image"]} alt="Recipe Image" class="w-24 h-24 object-cover rounded mb-3" />
+      <button
+        phx-click="save_recipe"
+        phx-value-id={recipe["id"]}
+        class="bg-green-600 text-white px-4 py-1 rounded hover:bg-green-700"
+      >
+        Save
+      </button>
+    </div>
   <% end %>
-</ul>
+</div>
 
-<h2>Saved Recipes</h2>
-<ul>
+<!-- Saved Recipes Section -->
+<%!-- <h2 class="text-2xl font-semibold text-gray-800 mt-12 mb-4">Saved Recipes</h2>
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
   <%= for saved <- @saved_recipes do %>
     <% url = "https://spoonacular.com/recipes/#{slugify(saved.title)}-#{saved.spoonacular_id}" %>
-    <li>
-      <a href={url} target="_blank">
-        <strong><%= saved.title %></strong>
-      </a><br/>
-      <img src={saved.image_url} width="100"/><br/>
-    </li>
+    <div class="bg-white rounded-lg shadow p-4 flex flex-col items-center text-center">
+      <a href={url} target="_blank" class="text-lg font-semibold text-blue-700 hover:underline mb-2">
+        <%= saved.title %>
+      </a>
+      <img src={saved.image_url} alt="Saved Recipe Image" class="w-24 h-24 object-cover rounded" />
+    </div>
   <% end %>
-</ul>
+</div> --%>

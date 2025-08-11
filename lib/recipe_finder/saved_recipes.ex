@@ -21,10 +21,20 @@ defmodule RecipeFinder.SavedRecipes do
     |> Repo.insert()
   end
 
-  def delete_saved_recipe(id) do
-    case get_saved_recipe_by_spoonacular_id(id) do
-      nil -> {:error, :not_found}
-      recipe -> Repo.delete(recipe)
-    end
+  # def delete_saved_recipe(id) do
+  #   case get_saved_recipe_by_spoonacular_id(id) do
+  #     nil -> {:error, :not_found}
+  #     recipe -> Repo.delete(recipe)
+  #   end
+  # end
+
+  def list_saved_recipes_for_user(user_id) do
+    Repo.all(from r in SavedRecipe, where: r.user_id == ^user_id)
+  end
+
+  def get_saved_recipe!(id), do: Repo.get!(SavedRecipe, id)
+
+  def delete_saved_recipe(%SavedRecipe{} = recipe) do
+    Repo.delete(recipe)
   end
 end
